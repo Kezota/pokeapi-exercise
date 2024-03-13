@@ -1,4 +1,11 @@
-import { Typography, Card, CardContent, Grid, CardMedia } from "@mui/material";
+import {
+  Typography,
+  Card,
+  CardContent,
+  Grid,
+  CardMedia,
+  Box,
+} from "@mui/material";
 import { PokemonData } from "../App";
 import capitalize from "../util/capitalize";
 
@@ -15,13 +22,14 @@ export default function PokemonDetail({ pokemon }: PokemonDetailPageProps) {
       <Grid container spacing={2}>
         <Grid
           item
-          xs={6}
+          xs={12}
+          md={6}
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "start",
             flexDirection: "column",
-            gap: 8,
+            gap: 4,
           }}
         >
           <Card
@@ -45,9 +53,10 @@ export default function PokemonDetail({ pokemon }: PokemonDetailPageProps) {
               p: 3,
               width: 400,
               display: "flex",
+              mb: 4,
             }}
           >
-            <div style={{ width: "50%" }}>
+            <Box sx={{ width: "50%" }}>
               <CardMedia
                 component="img"
                 image={String(pokemon.sprites.back_default)}
@@ -58,8 +67,8 @@ export default function PokemonDetail({ pokemon }: PokemonDetailPageProps) {
                 image={String(pokemon.sprites.back_shiny)}
                 alt={pokemon.name}
               />
-            </div>
-            <div style={{ width: "50%" }}>
+            </Box>
+            <Box sx={{ width: "50%" }}>
               <CardMedia
                 component="img"
                 image={String(pokemon.sprites.front_default)}
@@ -70,12 +79,13 @@ export default function PokemonDetail({ pokemon }: PokemonDetailPageProps) {
                 image={String(pokemon.sprites.front_shiny)}
                 alt={pokemon.name}
               />
-            </div>
+            </Box>
           </Card>
         </Grid>
         <Grid
           item
-          xs={6}
+          xs={12}
+          md={6}
           sx={{
             display: "flex",
             alignItems: "start",
