@@ -8,6 +8,7 @@ import {
   CardActionArea,
   CardMedia,
   CardContent,
+  Container,
 } from "@mui/material";
 import capitalize from "../util/capitalize";
 
@@ -127,8 +128,8 @@ function PokemonCard({ pokemon, navigate }: PokemonCardProps) {
   }
 
   return (
-    <Card sx={{ width: 250, borderRadius: 5 }} onClick={handleClick}>
-      <CardActionArea>
+    <Container>
+      <Card sx={{ width: 250, borderRadius: 3 }}>
         <CardMedia
           component="img"
           image={String(
@@ -136,12 +137,16 @@ function PokemonCard({ pokemon, navigate }: PokemonCardProps) {
           )}
           alt={pokemon.name}
         />
-        <CardContent sx={{ display: "flex", justifyContent: "center" }}>
-          <Typography gutterBottom variant="h4" component="div">
-            {capitalize(pokemon.name)}
-          </Typography>
-        </CardContent>
-      </CardActionArea>
-    </Card>
+      </Card>
+      <Card sx={{ width: 250, borderRadius: 3, my: 1 }} onClick={handleClick}>
+        <CardActionArea>
+          <CardContent sx={{ display: "flex", justifyContent: "center" }}>
+            <Typography gutterBottom variant="h4" component="div">
+              {capitalize(pokemon.name)}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+      </Card>
+    </Container>
   );
 }
