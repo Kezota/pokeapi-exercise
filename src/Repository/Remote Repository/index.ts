@@ -9,9 +9,8 @@ export const getPokemonDetails = async ({
   url?: string;
   id?: string;
 }) => {
-  // const response = await axios.get(URL);
   const response = await axios.get(
-    url || `https://pokeapi.co/api/v2/pokemon/${id || ""}`
+    url || `${import.meta.env.VITE_REACT_APP_BASE_URL}${id || ""}`
   );
   return response.data;
 };
@@ -21,8 +20,7 @@ console.log(import.meta.env.VITE_REACT_APP_BASE_URL);
 export async function getPokemonList(): Promise<IPokemonData[]> {
   const response = await axios.get<IPokemonResponse>(
     // process.env.REACT_APP_BASE_URL as string
-    "https://pokeapi.co/api/v2/pokemon/"
-    // import.meta.env.REACT_APP_BASE_URL
+    import.meta.env.VITE_REACT_APP_BASE_URL
   );
 
   const pokemonList = response.data.results;
