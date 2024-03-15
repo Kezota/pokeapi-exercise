@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import {
   Typography,
   Card,
@@ -9,33 +9,40 @@ import {
   CardMedia,
   Box,
 } from "@mui/material";
-import { TPokemonData } from "./PokemonList";
+import { IPokemonData } from "../Repository/Interface/IPokemonData";
 import capitalize from "../util/capitalize";
+import { getPokemonDetails } from "../Repository/Remote Repository";
 
 export default function PokemonDetail() {
-  const [pokemon, setPokemon] = useState<TPokemonData | undefined>();
+  const [pokemon, setPokemon] = useState<IPokemonData | undefined>();
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
 
   useEffect(() => {
-    const getPokemonDetails = async () => {
+    if (!params.pokemonId) return;
+    const fetchData = async () => {
       try {
-        setErrorMessage("Loading...");
-        const response = await axios.get(
-          `https://pokeapi.co/api/v2/pokemon/${params?.pokemonId || ""}`
-        );
-
-        setPokemon(response.data);
+        setIsLoading(true);
+        const data = await getPokemonDetails({ id: params.pokemonId });
+        setPokemon(data);
       } catch (err) {
-        const error = err as AxiosError;
-        console.log({ ...error, stack: "" });
-        setErrorMessage(`Data with pokemonId ${params?.pokemonId} not found`);
+        const axiosError = err as AxiosError;
+        console.log({ ...axiosError, stack: "" });
+        setErrorMessage(
+          `Pokemon with PokemonId ${params.pokemonId} not found!`
+        );
+      } finally {
+        setIsLoading(false);
       }
     };
-    getPokemonDetails();
+    fetchData();
   }, [params?.pokemonId]);
 
-  if (!pokemon) return <Typography variant="h3">{errorMessage}</Typography>;
+  if (errorMessage) return <Typography variant="h3">{errorMessage}</Typography>;
+
+  if (!pokemon || isLoading)
+    return <Typography variant="h3">Loading...</Typography>;
 
   return (
     <>
@@ -50,7 +57,7 @@ export default function PokemonDetail() {
   );
 }
 
-function ImagesCard({ pokemon }: { pokemon: TPokemonData }) {
+function ImagesCard({ pokemon }: { pokemon: IPokemonData }) {
   return (
     <Grid
       item
@@ -117,7 +124,7 @@ function ImagesCard({ pokemon }: { pokemon: TPokemonData }) {
   );
 }
 
-function StatsCard({ pokemon }: { pokemon: TPokemonData }) {
+function StatsCard({ pokemon }: { pokemon: IPokemonData }) {
   return (
     <Grid
       item

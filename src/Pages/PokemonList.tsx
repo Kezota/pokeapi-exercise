@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import {
   Typography,
   Grid,
@@ -10,80 +10,26 @@ import {
   CardContent,
   Container,
 } from "@mui/material";
+
 import capitalize from "../util/capitalize";
-
-export type TPokemonData = {
-  id: number;
-  name: string;
-  height: number;
-  weight: number;
-  moves: { move: { name: string } }[];
-  sprites: {
-    back_default: string | null;
-    back_shiny: string | null;
-    front_default: string | null;
-    front_shiny: string | null;
-    other: {
-      "official-artwork": {
-        front_default: string | null;
-      };
-    };
-  };
-};
-
-type TPokemonResponse = {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: { name: string; url: string }[];
-};
+import { IPokemonData } from "../Repository/Interface/IPokemonData";
+import { PokemonCardProps } from "../Repository/Interface/PokemonCardProps";
+import { getPokemonList } from "../Repository/Remote Repository";
 
 export default function PokemonList() {
-  const navigate = useNavigate();
-
-  const [pokemons, setPokemons] = useState<TPokemonData[]>([]);
+  const [pokemons, setPokemons] = useState<IPokemonData[]>([]);
 
   useEffect(() => {
-    const getPokemonDetails = async (URL: string) => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(URL);
-
-        return response.data;
+        const data = await getPokemonList();
+        setPokemons(data);
       } catch (err) {
-        const error = err as AxiosError;
-        console.log({ ...error, stack: "" });
+        const axiosError = err as AxiosError;
+        console.log({ ...axiosError, stack: "" });
       }
     };
-
-    const getPokemon = async () => {
-      try {
-        const response = await axios.get<TPokemonResponse>(
-          "https://pokeapi.co/api/v2/pokemon/"
-        );
-        const pokemonList = response.data.results;
-
-        const pokemonWithDetailsResponse = await Promise.allSettled(
-          pokemonList.map((pokemon) => getPokemonDetails(pokemon.url))
-        );
-
-        const pokemonWithDetails = pokemonWithDetailsResponse.map(
-          (pokemonDetails) => {
-            if (pokemonDetails.status === "fulfilled") {
-              return pokemonDetails.value;
-            } else {
-              console.error(pokemonDetails.reason);
-              return null;
-            }
-          }
-        );
-
-        setPokemons(pokemonWithDetails);
-      } catch (err) {
-        const error = err as AxiosError;
-        console.log({ ...error, stack: "" });
-      }
-    };
-    getPokemon();
+    fetchData();
   }, []);
 
   return (
@@ -96,7 +42,7 @@ export default function PokemonList() {
         spacing={{ xs: 2, md: 3 }}
         columns={{ xs: 4, sm: 8, md: 12, lg: 12 }}
       >
-        {pokemons.map((poke: TPokemonData) => (
+        {pokemons.map((poke: IPokemonData) => (
           <Grid
             item
             xs={6}
@@ -109,7 +55,7 @@ export default function PokemonList() {
               alignItems: "center",
             }}
           >
-            <PokemonCard pokemon={poke} navigate={navigate} key={poke.id} />
+            <PokemonCard pokemon={poke} />
           </Grid>
         ))}
       </Grid>
@@ -117,12 +63,8 @@ export default function PokemonList() {
   );
 }
 
-export type PokemonCardProps = {
-  pokemon: TPokemonData;
-  navigate: ReturnType<typeof useNavigate>;
-};
-
-function PokemonCard({ pokemon, navigate }: PokemonCardProps) {
+function PokemonCard({ pokemon }: PokemonCardProps) {
+  const navigate = useNavigate();
   function handleClick() {
     navigate(`/pokemonDetail/${pokemon.id}`);
   }
