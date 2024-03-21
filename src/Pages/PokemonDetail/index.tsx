@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { AxiosError } from "axios";
-import { Typography, Grid } from "@mui/material";
+import { Typography, Grid, CircularProgress } from "@mui/material";
 import { IPokemonData } from "../../Repository/Interface/IPokemonData";
 import capitalize from "../../util/capitalize";
 import { getPokemonDetails } from "../../Repository/RemoteRepository";
@@ -16,28 +15,31 @@ export default function PokemonDetail() {
 
   useEffect(() => {
     if (!params.pokemonId) return;
+
     const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getPokemonDetails({ id: params.pokemonId });
+      setIsLoading(true);
+      const data = await getPokemonDetails({ id: params.pokemonId });
+      setIsLoading(false);
+
+      if (data) {
         setPokemon(data);
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        console.log({ ...axiosError, stack: "" });
+      } else {
         setErrorMessage(
           `Pokemon with PokemonId ${params.pokemonId} not found!`
         );
-      } finally {
-        setIsLoading(false);
       }
     };
+
     fetchData();
-  }, [params?.pokemonId]);
+  }, [params.pokemonId]);
 
-  if (errorMessage) return <Typography variant="h3">{errorMessage}</Typography>;
+  if (errorMessage) {
+    return <Typography variant="h3">{errorMessage}</Typography>;
+  }
 
-  if (!pokemon || isLoading)
-    return <Typography variant="h3">Loading...</Typography>;
+  if (!pokemon || isLoading) {
+    return <CircularProgress />;
+  }
 
   return (
     <>

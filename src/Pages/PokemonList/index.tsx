@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { AxiosError } from "axios";
 import { Typography, Grid } from "@mui/material";
 
 import { IPokemonData } from "../../Repository/Interface/IPokemonData";
@@ -10,16 +9,7 @@ export default function PokemonList() {
   const [pokemons, setPokemons] = useState<IPokemonData[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getPokemonList();
-        setPokemons(data);
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        console.log({ ...axiosError, stack: "" });
-      }
-    };
-    fetchData();
+    getPokemonList().then((data) => setPokemons(data));
   }, []);
 
   return (

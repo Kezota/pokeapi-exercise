@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Container } from "@mui/material";
 
-import PokemonDetail from "./Pages/PokemonDetail/PokemonDetail";
-import PokemonList from "./Pages/PokemonList/PokemonList";
+import PokemonDetail from "./Pages/PokemonDetail";
+import PokemonList from "./Pages/PokemonList";
 
 export default function App() {
   return (
