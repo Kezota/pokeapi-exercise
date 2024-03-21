@@ -15,11 +15,8 @@ export const getPokemonDetails = async ({
   return response.data;
 };
 
-console.log(import.meta.env.VITE_REACT_APP_BASE_URL);
-
 export async function getPokemonList(): Promise<IPokemonData[]> {
   const response = await axios.get<IPokemonResponse>(
-    // process.env.REACT_APP_BASE_URL as string
     import.meta.env.VITE_REACT_APP_BASE_URL
   );
 
@@ -34,7 +31,6 @@ export async function getPokemonList(): Promise<IPokemonData[]> {
       if (pokemonDetails.status === "fulfilled") {
         return pokemonDetails.value;
       } else {
-        console.error(pokemonDetails.reason);
         return null;
       }
     }
